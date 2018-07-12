@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 #include "World.h"
-#include "Button.h"
+#include "PushButton.h"
 
 
 //管理クラス　キャラの生成はworldが行う
@@ -13,7 +13,7 @@ class DesktopMascot {
 	static const int screenY;
 	static World *world;		//世界への参照
 	static int omoteHandle;		//描画対象のハンドル
-	static list<std::unique_ptr<Button>> buttonList;	//ボタン管理　このクラスで行う
+	static list<std::unique_ptr<PushButton>> buttonList;	//ボタン管理　このクラスで行う
 
 	//インスタンス生成禁止	静的クラス
 	DesktopMascot();

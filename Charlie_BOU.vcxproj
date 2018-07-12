@@ -158,6 +158,7 @@
     <ClInclude Include="DontMoveObject.h" />
     <ClInclude Include="FileFolderStream.h" />
     <ClInclude Include="Object2D.h" />
+    <ClInclude Include="PushButton.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +166,7 @@
     <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="DesktopMascot.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object2D.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

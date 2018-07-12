@@ -8,7 +8,7 @@ const int DesktopMascot::screenX = GetSystemMetrics(SM_CXSCREEN);
 const int DesktopMascot::screenY = GetSystemMetrics(SM_CYSCREEN);
 World *DesktopMascot::world;
 int DesktopMascot::omoteHandle;
-list<std::unique_ptr<Button>> DesktopMascot::buttonList;
+list<std::unique_ptr<PushButton>> DesktopMascot::buttonList;
 
 
 //初期化処理
@@ -46,16 +46,14 @@ void DesktopMascot::Initialize() {
 	//ワールド生成
 	world = new World(screenX, screenY);
 
-	//ボタンの生成	Charaフォルダ⇒名前の数*2生成したい
-	int y = 0, size = 50;
+	//ボタンの生成	Charaフォルダ⇒名前の数生成したい
+	int y = 0, size = 100;
 	for (auto cName : charaNameList) {
 		y++;
-		buttonList.push_back(std::unique_ptr<Button>
-			(new Button(cName.c_str(), 0, y * size, size, size, true,
-				[](const char * name) {world->AddCharacter(name); })));
-		buttonList.push_back(std::unique_ptr<Button>
-			(new Button(cName.c_str(), size, y * size, size, size, true,
-				[](const char * name) {world->DeleteCharacter(name); })));
+		buttonList.push_back(std::unique_ptr<PushButton>
+			(new PushButton(cName, 0, y * size, size, size, true,
+				[](const string name) {world->AddCharacter(name); },
+				[](const string name) {world->DeleteCharacter(name); })));
 	}
 }
 
@@ -67,30 +65,25 @@ void DesktopMascot::Execute() {
 	while (ProcessMessage() == 0) {
 
 		//ユーザー入力をゲットする　
+		Input input;
 		//今はマウスだけやが、キーボードとかもゲットしたい
-		int mouseX, mouseY;
-		bool mouseState = false;
-		if (GetMouseInput() & MOUSE_INPUT_LEFT) mouseState = true;
-		GetMousePoint(&mouseX, &mouseY);
-
-		cout << "ボタン処理" << endl;
+		input.mouseLeftState = ((GetMouseInput() & MOUSE_INPUT_LEFT)) ? true : false;
+		GetMousePoint(&(input.mouseX), &(input.mouseY));
 
 		//ボタンの管理ここで行う	コールバック関数を使用している　Button.h
 		for (auto itr = buttonList.begin(); itr != buttonList.end(); itr++) {
-			(*itr)->UpDate(mouseX, mouseY, mouseState);
-			cout << (*itr)->GetName() << endl;
+			(*itr)->UpDate(input);
 		}
 
-		cout << "world処理" << endl;
-
 		//世界を一時刻進める
-		world->Update();
-
-		cout << "描画" << endl;
+		world->Update(input);
 
 		//ボタンの描画
-		for (auto itr = buttonList.begin(); itr != buttonList.end(); itr++)(*itr)->Draw();
-
+		//マウスカーソルがボタンに近い時だけ表示する
+		if ((input.mouseX < 300)&&(input.mouseX > 0)) {
+			for (auto itr = buttonList.begin(); itr != buttonList.end(); itr++)
+				(*itr)->Draw();
+		}
 		//世界の描画
 		world->Draw();
 

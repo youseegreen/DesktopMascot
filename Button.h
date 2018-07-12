@@ -1,8 +1,9 @@
 #pragma once
 #include "Object2D.h"
+#include <iostream>
 
 //AddCharaかDeleteCharaいれるためのやつ
-typedef  void(*FUNCTION_POINTER)(const char *name);
+typedef  void(*FUNCTION_POINTER)(const string name);
 
 //立下りボタン
 class Button : public Object2D {
@@ -14,7 +15,7 @@ class Button : public Object2D {
 	bool callBackFrag;		//コールバック関数を使うかどうか
 
 public:
-	Button(const char *cName, float x, float y, 
+	Button(const string cName, float x, float y, 
 			float wid, float hei, bool draw, FUNCTION_POINTER f = NULL) :
 		Object2D(cName, x, y, 0, 0, 0,0,0,0,0,0,wid, hei, false, draw) {
 		if (f != NULL) { fp = f; callBackFrag = true; }
@@ -26,11 +27,14 @@ public:
 
 	virtual bool OnOff() const{ return state; }
 
+
+	//こいつここ見直さないと立下りボタンの役割果たさないかも...
 	//毎ループごとに呼び出す　stateにOnかOffか入れる
 	virtual void UpDate(int mouseX, int mouseY, bool mouseState) {
-		//ボタンは動かない
 		if (IsIn(mouseX, mouseY)) {
+		//マウスがかぶっているならば
 			if (prev && !mouseState) {
+				//前がついてて
 				state = true;
 				prev = false;
 			}
@@ -49,17 +53,21 @@ public:
 		}
 
 		//コールバック関数の実行	今の場合キャラの追加or削除
-		if (state)
-			if(fp != NULL) fp(name);
+		if (state) {
+			if (callBackFrag) {
+				fp(name);
+				cout << "ok" << endl;
+			}
+		}
 	}
 
 	//今のところ画像を入れる予定はないので、DrawBoxでつくる
 	virtual void Draw() const{
 		if (prev) {
-			DrawBox(x, y, width, height, 0xFF0000, TRUE);
+			DrawBox(x, y, width, height, 0xFFFF, TRUE);
 		}
 		else {
-			DrawBox(x, y, width, height, 0x0000FF, TRUE);
+			DrawBox(x, y, width, height, 0x00FF, TRUE);
 		}
 	}
 

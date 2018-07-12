@@ -31,9 +31,8 @@ void LoadAllData() {
 		for (auto img : imgName) {
 			Image image;
 			image.imgHandle = LoadGraph(img.c_str());
-
-			image.width = 10;	//‚±‚±‰æ‘œ‚©‚ç“Ç‚ß‚é‚æ‚¤‚É
-			image.height = 10;
+			//ƒTƒCƒY‚ð“¾‚é
+			GetGraphSize(image.imgHandle, &(image.width), &(image.height));
 			image.alphaFrag = false;
 
 			data.imgList.push_back(image);

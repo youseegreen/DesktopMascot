@@ -34,3 +34,32 @@ extern std::map<std::string, DataSet> charaDataList;
 //キャラのデータを全て読み込む関数
 extern void LoadAllData();
 
+
+struct Vector2f {
+	float x;
+	float y;
+	void Normalize() {
+		float s = sqrtf(x*x + y * y);
+		x /= s;
+		y /= s;
+	}
+	float operator*(const Vector2f &other)const {
+		return (x * other.x + y * other.y);
+	}
+	Vector2f operator*(const float scalar)const {
+		Vector2f ret = { x * scalar,y * scalar };
+		return ret;
+	}
+	Vector2f operator-(const Vector2f &other)const {
+		Vector2f ret = { x - other.x,y - other.y };
+		return ret;
+	}
+};
+
+//ユーザー入力のデータ構造
+struct Input {
+	int mouseX;
+	int mouseY;
+	bool mouseLeftState;
+	bool mouseRightState;
+};

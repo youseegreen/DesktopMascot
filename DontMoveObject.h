@@ -1,5 +1,8 @@
 #pragma once
 #include "Object2D.h"
+#include <string>
+
+using namespace std;
 
 //これを派生して背景オブジェクト作ればよいと思う
 
@@ -8,7 +11,7 @@ class DontMoveObjectNoImage :public Object2D {
 
 
 public:
-	DontMoveObjectNoImage(const char *n, float x, float y, float theta,
+	DontMoveObjectNoImage(const string n, float x, float y, float theta,
 		float mass, float wid, float hei, bool colli) :
 		Object2D(n, x, y, 0, 0, 0, 0, 0, 0, theta, mass, wid, hei, colli, false) {
 	}
@@ -18,7 +21,7 @@ public:
 	}
 
 	//更新
-	virtual void Update() {
+	virtual void Update(Input &input) {
 		//何もしない　存在するだけ
 	}
 
