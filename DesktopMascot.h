@@ -15,6 +15,8 @@ class DesktopMascot {
 	static int omoteHandle;		//描画対象のハンドル
 	static list<std::unique_ptr<PushButton>> buttonList;	//ボタン管理　このクラスで行う
 
+	static int threX1, threX2, threY1, threY2;	//マウスカーソルをどこにしたらボタン表示するか
+
 	//インスタンス生成禁止	静的クラス
 	DesktopMascot();
 
@@ -35,5 +37,8 @@ public:
 	static void PrintError(){ 
 		//エラーが起きたときここに書く
 	}
+
+	//ボタンをリセット、worldからそのキャラを消す
+	static void ResetCharacter(const string name);
 };
 

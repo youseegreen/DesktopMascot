@@ -2,7 +2,7 @@
 
 
 bool Object2D::IsCollision(const Object2D &other) const {
-	if (!collisionFrag || !other.collisionFrag) return false;	//衝突フラグoffならfalse
+	if (!collisionFlag || !other.collisionFlag) return false;	//衝突フラグoffならfalse
 
 	if (((x + width) <= other.x) || (x >= (other.x + other.width))
 		|| ((y + height) <= other.y) || (y >= (other.y + other.height))) {
@@ -12,6 +12,26 @@ bool Object2D::IsCollision(const Object2D &other) const {
 	return true;
 }
 
+//矩形物体2つがどうかぶっているかを数字で返す
+/*数字の返し方*/
+/*かぶっていない⇒0*/
+/*呼び出し側が、引数側の...*/
+/*１：左上でかぶっている
+２：真上でかぶっている
+　３：右上でかぶっている
+ ４：左横でかぶっている
+ ５：引数側に囲まれている
+ ６：右横でかぶっている
+ ７：左下でかぶっている
+ ８：真下でかぶっている
+ ９：右下でかぶっている
+ 10：左覆っている
+ 11：真ん中縦に覆っている
+ 12：右覆っている
+ 13：上覆っている
+ 14：真ん中横に覆っている
+ 15：下覆っている
+ 16：囲んでいる　　　*/
 int Object2D::WhereCollision(const Object2D &other) const {
 	if (!IsCollision(other))return 0;	//当たっていないなら0を返す
 	//この時点で当たっていることは確定
@@ -76,7 +96,8 @@ int Object2D::WhereCollision(const Object2D &other) const {
 	return (3 * ynum + xnum + 1);	//1～9済
 }
 
-//よくわかりませんでした　修正して
+//衝突してない場合も0返すので注意　IsCollisionで判定した後使うべき
+//相手に向かっていく方向の法線ベクトルを返す　よくわかりませんのは全部0にしたから修正して　
 void Object2D::GetNormalVector(const Object2D &other, Vector2f &vec) const {
 	vec.x = vec.y = 0.0f;
 	
@@ -86,77 +107,46 @@ void Object2D::GetNormalVector(const Object2D &other, Vector2f &vec) const {
 	//衝突の仕方によって場合分けする
 	switch (number) {
 	case 1:	//左上かぶっている
-		vec.x = other.y - y - height;
-		vec.y = other.x - x - width;
-		vec.Normalize();
-		return;
-	case 2:
-		vec.x = 0.0f;
-		vec.y = -1.0f;
+		vec.x = -other.y + y + height;
+		vec.y = -other.x + x + width;
+		vec.NormalizeSelf();
 		return;
 	case 3:
-		vec.x = y + height - other.y;
-		vec.y = x - other.x - other.width;
-		vec.Normalize();
-		return;
-	case 4:
-		vec.x = -1.0f;
-		vec.y = 0.0f;
-		return;
-	case 5:
-		vec.x = 0.0f;
-		vec.y = 0.0f;
-		return;
-	case 6:
-		vec.x = 1.0f;
-		vec.y = 0.0f;
+		vec.x = -y - height + other.y;
+		vec.y = -x + other.x + other.width;
+		vec.NormalizeSelf();
 		return;
 	case 7:
-		vec.x = other.y + other.height - y;
-		vec.y = other.x - x - width;
-		vec.Normalize();
-		return;
-	case 8:
-		vec.x = 0.0f;
-		vec.y = 1.0f;
+		vec.x = -other.y - other.height + y;
+		vec.y = -other.x + x + width;
+		vec.NormalizeSelf();
 		return;
 	case 9:
-		vec.x = other.y + other.height - y;
-		vec.y = other.x + other.width - x;
-		vec.Normalize();
+		vec.x = -other.y - other.height + y;
+		vec.y = -other.x - other.width + x;
+		vec.NormalizeSelf();
 		return;
-	case 10:
-		vec.x = -1.0f;
-		vec.y = 0.0f;
-		return;
-	case 11:
-		vec.x = 0.0f;
-		vec.y = 0.0f;
-		return;
-	case 12:
-		vec.x = 1.0f;
-		vec.y = 0.0f;
-		return;
+	case 2:
 	case 13:
-		vec.x = 0.0f;
-		vec.y = -1.0f;
-		return;
-	case 14:
-		vec.x = 0.0f;
-		vec.y = 0.0f;
-		return;
-	case 15:
-		vec.x = 0.0f;
 		vec.y = 1.0f;
 		return;
-	case 16:
-		vec.x = 0.0f;
-		vec.y = 0.0f;
+	case 4:
+	case 10:
+		vec.x = 1.0f;
 		return;
+	case 6:
+	case 12:
+		vec.x = -1.0f;
+		return;
+	case 8:
+	case 15:
+		vec.y = -1.0f;
+		return;
+	case 11:
+	case 14:
+	case 5:		//全方位
+	case 16:	//全方位
 	default:	//ぶつかっていない
-		vec.x = 0.0f;
-		vec.y = 0.0f;
 		return;
 	}
-
 }

@@ -33,7 +33,7 @@ void LoadAllData() {
 			image.imgHandle = LoadGraph(img.c_str());
 			//ƒTƒCƒY‚ğ“¾‚é
 			GetGraphSize(image.imgHandle, &(image.width), &(image.height));
-			image.alphaFrag = false;
+			image.alphaFlag = false;
 
 			data.imgList.push_back(image);
 		}

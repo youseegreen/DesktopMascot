@@ -157,6 +157,7 @@
     <ClInclude Include="DesktopMascot.h" />
     <ClInclude Include="DontMoveObject.h" />
     <ClInclude Include="FileFolderStream.h" />
+    <ClInclude Include="MyVector2f.h" />
     <ClInclude Include="Object2D.h" />
     <ClInclude Include="PushButton.h" />
     <ClInclude Include="World.h" />

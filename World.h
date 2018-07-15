@@ -31,6 +31,9 @@ public:
 	//レンダリング
 	void Draw();
 
+	//世界内にオブジェクトがいるかチェック　マージンは20
+	bool IsObjectInWorld(const Object2D &obj, const int margin = 5);
+
 	//同じ名前のキャラクタは一体しか存在できない
 	void AddCharacter(const string name);
 	void DeleteCharacter(const string name);

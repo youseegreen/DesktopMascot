@@ -8,6 +8,7 @@ typedef  void(*FUNCTION_POINTER)(const string name);
 //プッシュスイッチ
 class PushButton : public Object2D {
 //	Image img[2];	//onとoff
+	Image *img;		//描画用に使う画像
 	bool state;		//現在OnかOffかを示す
 	bool prev;		//立下り検出用
 
@@ -23,6 +24,7 @@ public:
 		Object2D(cName, x, y, 0, 0, 0, 0, 0, 0, 0, 0, wid, hei, false, draw) {
 		state = false;
 		prev = false;
+		img = NULL;
 		if (fon != NULL) { 
 			 onFunc = fon;
 			 offFunc = foff;
@@ -33,13 +35,27 @@ public:
 			offFunc = NULL;
 			callBackFrag = false;
 		}
+		GetData();
 	}
 
-	//データは何もない　
-	virtual void GetData() {}
+	//DataSetから画像1つとってくる
+	//それを格納する
+	virtual void GetData() {
+		auto itr = charaDataList.find(name);
+		if (itr == charaDataList.end())return;	//データがなければimg = NULL
+
+		if (charaDataList[name].imgList.size() <= 0)return;	//画像がなければimg = NULL
+		img = &(charaDataList[name].imgList[0]);
+	}
 
 	//現在の状態
 	virtual bool OnOff() const { return state; }
+
+	//リセット
+	virtual void Reset() {
+		state = false;
+		prev = false;
+	}
 
 	//コールバック関数を登録してない時の処理まだ
 	//この関数はめっちゃ簡略化できるけど、今後のために詳しく書いてある
@@ -92,10 +108,17 @@ public:
 	//今のところ画像を入れる予定はないので、DrawBoxでつくる
 	virtual void Draw() const {
 		if (state) {	//スイッチがon（へこんでいる）
-			DrawBox(x, y, x + width, y + height, 0xFFFF, TRUE);
+			DrawBox(x, y, x + width, y + height, GetColor(255,0,0), TRUE);
+			if (img != NULL)
+				DrawExtendGraph(x, y, x + width, y + height, img->imgHandle, TRUE);
 		}
 		else {			//スイッチがoff
-			DrawBox(x, y, x + width, y + height, 0x00FF, TRUE);
+			DrawBox(x, y, x + width, y + height, GetColor(0, 0, 255), TRUE);
+			if (img != NULL) {
+				SetDrawBright(128, 128, 128);	//輝度を暗く
+				DrawExtendGraph(x, y, x + width, y + height, img->imgHandle, TRUE);
+				SetDrawBright(255, 255, 255);	//輝度を戻す
+			}
 		}
 	}
 

@@ -14,6 +14,9 @@ class Character : public Object2D {
 	Image *nowImg;		//現在参照中のイメージ
 	int nowNum;			//現在の番号
 
+	//AI系
+	int moveState;	//ついてくる　ランダムとかやる　intをenumにしたい
+
 public:
 	//コンストラクタ
 	Character(const string n, float x, float y, float vx, float vy, float mass,
@@ -21,7 +24,21 @@ public:
 		Object2D(n, x, y, vx, vy, 0, 0, 0, 0, 0, mass, wid, hei, colli, draw) {
 		cout << "私は" << name << endl;
 		GetData();
+		moveState = 0;	//0：ランダム
 	}
+
+	//コピーコンストラクタ
+	Character(const Character &chara) :Object2D(chara) {
+		pointer2DataSet = chara.pointer2DataSet;
+		imgList = chara.imgList;
+		sndList = chara.sndList;
+		nowImg = chara.nowImg;
+		nowNum = chara.nowNum;
+		moveState = chara.moveState;
+	}
+	//Object2Dの別オブジェクトを見るときのために　一時利用前提、Chara変数は何もしない
+	Character(const Object2D &obj) :Object2D(obj) { }
+
 	
 	//DataSet.hからChaeacterに必要な全データ拾ってくる
 	virtual void GetData();
@@ -36,28 +53,5 @@ public:
 	}
 
 	//衝突時の振る舞い
-	virtual void BehaviorOfCollision(const Object2D &other) {
-		
-		//法線ベクトルを得る
-		Vector2f N;
-		GetNormalVector(other, N);
-
-		//0ベクトルなら単に反射
-		if ((N.x == 0) && (N.y == 0)) {
-			vx *= -1;
-			vy *= -1;
-			return;
-		}
-
-		//速度ベクトルの逆ベクトル
-		Vector2f v = { -vx,-vy };
-
-		//向きが逆なら何もしない
-		if (v*N <= 0) return;
-
-		//反射方向
-		Vector2f R = N * (2 * (v * N)) - v;
-		vx = R.x;
-		vy = R.y;
-	}
+	virtual void BehaviorOfCollision(const Object2D &other);
 };
