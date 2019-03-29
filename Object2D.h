@@ -3,6 +3,7 @@
 #include "MyVector2f.h"
 #include "DataSet.h"
 #include <string>
+#include <list>
 using namespace std;
 
 class Object2D {
@@ -14,6 +15,8 @@ protected:
 	float x, y, vx, vy, ax, ay, fx, fy, theta, mass, width, height;
 	float ref, omega;	//反射率、角速度
 	bool collisionFlag;	//当たり判定があるかないか	
+	list<const Object2D *> prevCollisionList;	//前時刻に当たったobjを記録
+	list<const Object2D *> nowCollisionList;	//現在時刻に当たったobjを記録
 
 	//描画系
 	bool isDraw;	//描画するかどうか
@@ -56,7 +59,11 @@ public:
 	virtual void Update(Input &input) {}	//位置の更新を行う
 	virtual void GetData() {}	//画像や音声ファイルをロード　このクラスは何もしない
 	virtual void Draw() const {}	//レンダリング　このクラスは何もしない
-
+	virtual void UpdateCollisionList() {
+		prevCollisionList = nowCollisionList;
+		while (!nowCollisionList.empty())
+			nowCollisionList.pop_front();
+	}
 									//ゲッター
 	virtual void GetPosition(float &tx, float &ty) const {
 		tx = x;
@@ -78,8 +85,8 @@ public:
 	virtual void GetNormalVector(const Object2D &other, Vector2f &vec) const; 
 
 	//これ上のやつに入った時に呼んだほうがいいのかな?
-	virtual void BehaviorOfCollision(const Object2D &other){
-		
+	virtual bool BehaviorOfCollision(const Object2D &other){
+		return true;
 	}
 
 protected:
@@ -121,4 +128,5 @@ protected:
 			&& (input.mouseY > y) && (input.mouseY < (y + height))) return true;
 		return false;
 	}
+
 };

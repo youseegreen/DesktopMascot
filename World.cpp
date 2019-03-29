@@ -15,17 +15,27 @@ void World::Update(Input &input) {
 	}
 
 	//衝突したかの判定
+	for (auto object = objectList.begin(); object != objectList.end(); ++object) {
+		(*object)->UpdateCollisionList();
+	}
+
 	for (auto object1 = objectList.begin(); object1 != objectList.end(); ++object1) {
 		auto object2 = object1;
 		++object2;	
 		for (object2; object2 != objectList.end(); ++object2) {
 			if ((*object1)->IsCollision(*(*object2))) {
-				//ここその場で衝突関数呼ぶか、Updateで処理するか悩む
 				//とりあえず衝突時の処理関数を呼び出す
-				//元の状態保存しやなあかん　けど　コピーコンストラクタを設定しなあかん
-				Object2D tmp(*(*object1));
-				(*object1)->BehaviorOfCollision(*(*object2));
-				(*object2)->BehaviorOfCollision(tmp);
+				
+				//両方のオブジェクトとも正しく衝突判定したいときのみ　衝突判定する
+				Object2D tmp1(*(*object1));
+				Object2D tmp2(*(*object2));
+				if (tmp1.BehaviorOfCollision(tmp2)
+					&& tmp2.BehaviorOfCollision(*(*object1))) {
+				
+					Object2D tmp(*(*object1));
+					(*object1)->BehaviorOfCollision(*(*object1));
+					(*object2)->BehaviorOfCollision(tmp);
+				}
 			}
 		}
 	}

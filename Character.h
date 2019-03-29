@@ -53,5 +53,5 @@ public:
 	}
 
 	//Õ“Ë‚ÌU‚é•‘‚¢
-	virtual void BehaviorOfCollision(const Object2D &other);
+	virtual bool BehaviorOfCollision(const Object2D &other);
 };
